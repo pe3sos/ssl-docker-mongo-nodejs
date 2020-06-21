@@ -1,0 +1,30 @@
+version: '2'
+
+services:
+  myNode:
+    image: node:dubnium
+    working_dir: /src/myapp
+    depends_on:
+      - mongodb
+    environment:
+      - MONGOHOST=mongodb
+    volumes:
+      - ./:/src/app
+    command: >
+      sh -c "cp -r /src/app/* /src/myapp &&
+        yarn install && yarn start"
+  mongodb:
+    image: mongo
+    ports:
+      - 27017:27017
+    environment:
+      - MONGO_INITDB_DATABASE=test
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+    volumes:
+      - ./certs:/data/ssl
+      - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    command:
+      --tlsMode=allowTLS
+      --tlsCertificateKeyFile=/data/ssl/server.pem
+      --tlsCAFile=/data/ssl/ca.pem
