@@ -6,6 +6,7 @@ services:
     working_dir: /src/myapp
     depends_on:
       - mongodb
+      - adminmongo
     environment:
       - MONGOHOST=mongodb
     volumes:
@@ -28,3 +29,9 @@ services:
       --tlsMode=allowTLS
       --tlsCertificateKeyFile=/data/ssl/server.pem
       --tlsCAFile=/data/ssl/ca.pem
+  adminmongo:
+    image: mrvautin/adminmongo
+    ports:
+      - 1234:1234
+    environment:
+      - HOST=0.0.0.0
